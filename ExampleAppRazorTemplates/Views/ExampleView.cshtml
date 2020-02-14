@@ -1,0 +1,10 @@
+﻿@model ExampleAppRazorTemplates.Models.ExampleModel
+
+<html>
+<head>
+</head>
+<body>
+    <div>Plain text: @Model.PlainText</div>
+    @Html.Partial("ExamplePartialView.cshtml", Model)
+</body>
+</html>
