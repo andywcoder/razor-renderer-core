@@ -1,4 +1,6 @@
 using ExampleAppRazorTemplates.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RazorRenderer;
 using System.Threading.Tasks;
@@ -15,7 +17,10 @@ namespace RazorRendererTest
             var razorViewToStringRenderer = RazorViewToStringRendererFactory.CreateRenderer();
 
             // Act
-            var html = await razorViewToStringRenderer.RenderViewToStringAsync("/Views/ExampleView.cshtml", new ExampleModel() { PlainText = "Bla bla bla", HtmlContent = "<em>Bla bla bla</em>" });
+            var html = await razorViewToStringRenderer.RenderViewToStringAsync(
+                "/Views/ExampleView.cshtml",
+                new ExampleModel() { PlainText = "Some text", HtmlContent = "<em>Some emphasized text</em>" },
+                new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()) { { "Value1", 123 }, { "Value2", "Some view data" } });
 
             // Assert
             Assert.IsNotNull(html);

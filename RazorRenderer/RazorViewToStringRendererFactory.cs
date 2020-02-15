@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.ObjectPool;
-using Microsoft.Extensions.PlatformAbstractions;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -16,30 +16,20 @@ namespace RazorRenderer
         public static RazorViewToStringRenderer CreateRenderer()
         {
             var services = new ServiceCollection();
-            var applicationEnvironment = PlatformServices.Default.Application;
-            services.AddSingleton(applicationEnvironment);
-
-            var appDirectory = Directory.GetCurrentDirectory();
-
-            var environment = new HostingEnvironment
+            services.AddSingleton<IHostingEnvironment>(new HostingEnvironment
             {
                 ApplicationName = Assembly.GetEntryAssembly().GetName().Name
-            };
-            services.AddSingleton<IHostingEnvironment>(environment);
-
+            });
             services.Configure<RazorViewEngineOptions>(options =>
             {
                 options.FileProviders.Clear();
-                options.FileProviders.Add(new PhysicalFileProvider(appDirectory));
+                options.FileProviders.Add(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
             });
-
             services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
-
-            var diagnosticSource = new DiagnosticListener("Microsoft.AspNetCore");
-            services.AddSingleton<DiagnosticSource>(diagnosticSource);
-
+            services.AddSingleton<DiagnosticSource>(new DiagnosticListener("Microsoft.AspNetCore"));
             services.AddLogging();
-            services.AddMvc();
+            var builder = services.AddMvcCore();
+            builder.AddRazorPages();
             services.AddSingleton<RazorViewToStringRenderer>();
             var provider = services.BuildServiceProvider();
             return provider.GetRequiredService<RazorViewToStringRenderer>();

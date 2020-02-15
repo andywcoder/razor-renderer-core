@@ -19,9 +19,9 @@ namespace RazorRenderer
 {
     public class RazorViewToStringRenderer
     {
-        private IRazorViewEngine _viewEngine;
-        private ITempDataProvider _tempDataProvider;
-        private IServiceProvider _serviceProvider;
+        private readonly IRazorViewEngine _viewEngine;
+        private readonly ITempDataProvider _tempDataProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         public RazorViewToStringRenderer(
             IRazorViewEngine viewEngine,
@@ -35,6 +35,11 @@ namespace RazorRenderer
 
         public async Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model)
         {
+            return await RenderViewToStringAsync(viewName, model, new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary()));
+        }
+
+        public async Task<string> RenderViewToStringAsync<TModel>(string viewName, TModel model, ViewDataDictionary viewDataDictionary)
+        {
             var actionContext = GetActionContext();
             var view = FindView(actionContext, viewName);
 
@@ -43,12 +48,7 @@ namespace RazorRenderer
                 var viewContext = new ViewContext(
                     actionContext,
                     view,
-                    new ViewDataDictionary<TModel>(
-                        metadataProvider: new EmptyModelMetadataProvider(),
-                        modelState: new ModelStateDictionary())
-                    {
-                        Model = model
-                    },
+                    new ViewDataDictionary<TModel>(viewDataDictionary, model),
                     new TempDataDictionary(
                         actionContext.HttpContext,
                         _tempDataProvider),
@@ -85,8 +85,10 @@ namespace RazorRenderer
 
         private ActionContext GetActionContext()
         {
-            var httpContext = new DefaultHttpContext();
-            httpContext.RequestServices = _serviceProvider;
+            var httpContext = new DefaultHttpContext
+            {
+                RequestServices = _serviceProvider
+            };
             return new ActionContext(httpContext, new RouteData(), new ActionDescriptor());
         }
     }

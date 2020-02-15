@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleApp", "ExampleApp\Ex
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorRenderer", "RazorRenderer\RazorRenderer.csproj", "{9072E376-CDB8-42E8-81A3-807E91F75B32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorRendererTest", "RazorRendererTest\RazorRendererTest.csproj", "{7DAE3FC4-C968-43C1-9E6E-DA06C6C09261}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorRendererTest", "RazorRendererTest\RazorRendererTest.csproj", "{7DAE3FC4-C968-43C1-9E6E-DA06C6C09261}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3EBFC0DA-02BB-4759-B246-8FF9C11179BE}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
